@@ -3,6 +3,12 @@
 
 #include "Queue.h"
 
+
+/*
+My best adaptation of a ListADT.
+Uses ListADT functions, but ran with a LinkedList base.
+*/
+
 template <class T>
 class ListADT{
     public:

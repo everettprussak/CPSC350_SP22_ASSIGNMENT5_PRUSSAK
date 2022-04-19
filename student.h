@@ -1,7 +1,10 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-
+/*
+Simple header class for Student Class.
+timeNeed, timeAdded, wait, and id are all int privates.
+*/
 
 class Student{
     public:

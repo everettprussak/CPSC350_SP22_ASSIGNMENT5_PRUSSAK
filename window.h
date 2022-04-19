@@ -4,6 +4,11 @@
 #include <iostream>
 using namespace std;
 
+/*
+Simple Header file for Window Class.
+This class has open, inUse, and idle.
+*/
+
 class Window{
     public:
         Window();

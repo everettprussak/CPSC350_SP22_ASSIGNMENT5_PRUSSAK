@@ -5,6 +5,11 @@
 #include "student.h"
 #include "window.h"
 
+/*
+Header for the bulk of the program.
+Has many private variables to keep track of various tasks.
+Has many public methods/functions to do various tasks.
+*/
 
 class Simulation{
     private:
