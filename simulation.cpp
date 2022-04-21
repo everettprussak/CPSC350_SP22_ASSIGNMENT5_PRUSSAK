@@ -85,7 +85,7 @@ string Simulation::runSimulation(){
     int holder[totalStudents]; //array to hold student Wait times
     bool theSame = false;
 
-    while(current<maxTime){ 
+    while(current<maxTime+maxTime){ 
         if(youth->isEmpty()){ //will run until the queue is empty
             break;
         }
@@ -99,11 +99,13 @@ string Simulation::runSimulation(){
         if(currentwait<0){
             currentwait=0; //nobody waits negative time...
         }
+
         if(currTime>current){ //this is for the start of the program, when the first student comes in at 2, each idle for each window is increased to 2, or whatevr the first student is.
             for(int i=0; i<numWindows; i++){
                 Window w1 = office->findAtPos(i);
                 if(w1.isFull()==false){
                     w1.addIdle(1); //increases idle
+                    w1.changeOpen(1);
                 }
                 else{
                     w1.changeInUse(-1); //decreases the inUse by 1
@@ -117,8 +119,11 @@ string Simulation::runSimulation(){
             for(int i=0; i<numWindows; i++){ //iterating through the LinkedList of type Window
                 Window w3 = office->findAtPos(i); //creates a window temporary that can be changed
                 if(w3.getInUse()==0){ //checks if the current window has nobody using it
+                    if(w3.getOpen()<current && currTime>=current){
+                        w3.addIdle(alpha);
+                    }
                     w3.changeInUse(currMins); //adds the current students minutes
-                    w3.changeOpen(currTime); //adds the current students time they walked into the office
+                    w3.changeOpen(current); //adds the current students time they walked into the office
                     office->updateNodeData(w3,i); //changes the node to correct data on the LinkedList
                     last = youth->peek().getAdded();
                     youth->remove(); //that student is dealt with, remove them
@@ -128,7 +133,8 @@ string Simulation::runSimulation(){
                     if(currentwait<0){
                         currentwait = 0; //nobody waits negative time
                     }
-                    add = 1; //somethign was added to the window
+                    add = i+1; //somethign was added to the window
+                    int other = currTime;
                     if(youth->isEmpty()==false){ //makes sure that queue does not give error here
                         currMins = youth->peek().getNeeded();
                         currTime = youth->peek().getAdded();
@@ -137,6 +143,7 @@ string Simulation::runSimulation(){
                         current--; //since the time will increase, if the time is the same, we decrease to even it out.
                     }
                     same = 0; //not the same variable now
+                
                     break;
                 }
                 else{ //the current window in the loop is full
@@ -144,10 +151,15 @@ string Simulation::runSimulation(){
                     add = 0; //nothing was added
                     same = 1; //the same variable
                     if(cycle==numWindows){ //if cycle is the same as the number of windows, then all are busy
-                        currentwait++; //student waited a minute
+                        if(current!=youth->peek().getAdded()){
+                            currentwait++;
+                        }
                         cycle = 0; //reset cycle for next time
                         for(int i=0; i<numWindows; i++){ //this basically decreases each inUse by 1 to simulate a minute has been passed
                             Window w3 = office->findAtPos(i);
+                            if(w3.getOpen()==current){
+                                continue;
+                            }
                             w3.changeInUse(-1);
                             office->updateNodeData(w3,i);
                         }
@@ -194,26 +206,28 @@ string Simulation::runSimulation(){
          Window w4 = office->findAtPos(y);
         if(office->findAtPos(y).getInUse()<maxLeftOver){
             w4.addIdle(maxLeftOver-office->findAtPos(y).getInUse()); //adds more idle time to non-busy or less-busy windows once we ended the loop
-            if(w4.getIdle()>5){
-                windowOver++; //checks for window idle times over 5 minutes
-            }
-            if(w4.getIdle()>windowLong){
-                windowLong = w4.getIdle(); //checks for longest idle window
-            }
-            office->updateNodeData(w4,y);
         }
+        int idleA = w4.getIdle();
+        if(idleA>5){
+            windowOver++; //checks for window idle times over 5 minutes
+        }
+        if(idleA>windowLong){
+            windowLong = w4.getIdle(); //checks for longest idle window
+        }
+        office->updateNodeData(w4,y);
         windowTotal =windowTotal + w4.getIdle();
      }
 
      windowMean = windowTotal/float(numWindows);
 
-
-     ret = "The mean student wait: " + to_string(mean) + "\n";
-     ret = ret + "The median student wait:" + to_string(median) + "\n";
-     ret = ret + "The Longest Student wait time: " + to_string(max) + "\n";
-     ret = ret + "The number of students who waited over ten minutes: " + to_string(overTen) + "\n";
-     ret = ret + "The mean window Idle time: " + to_string(windowMean) + "\n";
-     ret = ret + "The longest window Idle time: " + to_string(windowLong) + "\n";
-     ret = ret + "The number of window Idle time over 5 minutes: " + to_string(windowOver) + "\n";
+     cout << endl;
+     
+     ret = "The mean student wait: " + to_string(mean) + " minutes \n";
+     ret = ret + "The median student wait: " + to_string(median) + " minutes \n";
+     ret = ret + "The Longest Student wait time: " + to_string(max) + " minutes \n";
+     ret = ret + "The number of students who waited over ten minutes: " + to_string(overTen) + " minutes \n";
+     ret = ret + "The mean window Idle time: " + to_string(windowMean) + " minutes \n";
+     ret = ret + "The longest window Idle time: " + to_string(windowLong) + " minutes \n";
+     ret = ret + "The number of window Idle time over 5 minutes: " + to_string(windowOver) + " minutes \n";
     return ret;
 }
