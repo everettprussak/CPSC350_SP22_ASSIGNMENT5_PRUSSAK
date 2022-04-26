@@ -105,6 +105,7 @@ string Simulation::runSimulation(){
                 Window w1 = office->findAtPos(i);
                 if(w1.isFull()==false){
                     w1.addIdle(1); //increases idle
+                    cout << w1.getIdle() << endl;
                     w1.changeOpen(1);
                 }
                 else{
@@ -119,9 +120,11 @@ string Simulation::runSimulation(){
             for(int i=0; i<numWindows; i++){ //iterating through the LinkedList of type Window
                 Window w3 = office->findAtPos(i); //creates a window temporary that can be changed
                 if(w3.getInUse()==0){ //checks if the current window has nobody using it
-                    if(w3.getOpen()<current && currTime>=current){
+                    /*if(w3.getOpen()<current && currTime>=current){
+                        cout << "ok" << endl;
                         w3.addIdle(alpha);
-                    }
+                        cout << w3.getIdle() << endl;
+                    }*/
                     w3.changeInUse(currMins); //adds the current students minutes
                     w3.changeOpen(current); //adds the current students time they walked into the office
                     office->updateNodeData(w3,i); //changes the node to correct data on the LinkedList
@@ -179,7 +182,7 @@ string Simulation::runSimulation(){
         if(a>max){
             max = a; //max
         }
-        if(a>10){
+        if(a>9){
             overTen++; //did the student wait over ten minutes?
         }
     }
@@ -206,9 +209,10 @@ string Simulation::runSimulation(){
          Window w4 = office->findAtPos(y);
         if(office->findAtPos(y).getInUse()<maxLeftOver){
             w4.addIdle(maxLeftOver-office->findAtPos(y).getInUse()); //adds more idle time to non-busy or less-busy windows once we ended the loop
+            cout << w4.getIdle() << endl;
         }
         int idleA = w4.getIdle();
-        if(idleA>5){
+        if(idleA>4){
             windowOver++; //checks for window idle times over 5 minutes
         }
         if(idleA>windowLong){
@@ -225,9 +229,9 @@ string Simulation::runSimulation(){
      ret = "The mean student wait: " + to_string(mean) + " minutes \n";
      ret = ret + "The median student wait: " + to_string(median) + " minutes \n";
      ret = ret + "The Longest Student wait time: " + to_string(max) + " minutes \n";
-     ret = ret + "The number of students who waited over ten minutes: " + to_string(overTen) + " minutes \n";
+     ret = ret + "The number of students who waited ten minutes or over: " + to_string(overTen) + " \n";
      ret = ret + "The mean window Idle time: " + to_string(windowMean) + " minutes \n";
      ret = ret + "The longest window Idle time: " + to_string(windowLong) + " minutes \n";
-     ret = ret + "The number of window Idle time over 5 minutes: " + to_string(windowOver) + " minutes \n";
+     ret = ret + "The number of window Idle time 5 minutes or over: " + to_string(windowOver) + " \n";
     return ret;
 }
