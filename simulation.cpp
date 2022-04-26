@@ -105,7 +105,7 @@ string Simulation::runSimulation(){
                 Window w1 = office->findAtPos(i);
                 if(w1.isFull()==false){
                     w1.addIdle(1); //increases idle
-                    cout << w1.getIdle() << endl;
+                  //  cout << w1.getIdle() << endl;
                     w1.changeOpen(1);
                 }
                 else{
@@ -209,7 +209,7 @@ string Simulation::runSimulation(){
          Window w4 = office->findAtPos(y);
         if(office->findAtPos(y).getInUse()<maxLeftOver){
             w4.addIdle(maxLeftOver-office->findAtPos(y).getInUse()); //adds more idle time to non-busy or less-busy windows once we ended the loop
-            cout << w4.getIdle() << endl;
+           // cout << w4.getIdle() << endl;
         }
         int idleA = w4.getIdle();
         if(idleA>4){
