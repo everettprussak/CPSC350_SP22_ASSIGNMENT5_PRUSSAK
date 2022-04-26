@@ -175,10 +175,14 @@ string Simulation::runSimulation(){
 
 
     sort(holder,holder+totalStudents); //sorts the array for the median
-    int max = 0, overTen = 0, sum = 0, middle=totalStudents/2; //variables needed
+    int noWait = 0;
+    int max = 0, overTen = 0, sum = 0; //variables needed
     float median = 0.0, mean = 0.0;
     for(int a: holder){
         sum = sum + a; //sum for the mean
+        if(a==0){
+            noWait++;
+        }
         if(a>max){
             max = a; //max
         }
@@ -187,14 +191,31 @@ string Simulation::runSimulation(){
         }
     }
 
-    if(totalStudents%2==0){ //if the number of students are even then median is average of the middle 2 values
-         median = (holder[middle-1] + holder[middle]) / 2.0;
+    int waiters = totalStudents - noWait;
+    if(waiters<1){
+        waiters = totalStudents;
+    }
+    int middle=waiters/2;
+    int newArray[waiters];
+    int counterA = 0;
+
+    for(int a: holder){
+        if(a>0){
+            newArray[counterA] = a;
+            counterA++;
+        }
+    }
+
+
+
+    if(waiters%2==0){ //if the number of students are even then median is average of the middle 2 values
+         median = (newArray[middle-1] + newArray[middle]) / 2.0;
      }
      else{
-         median = holder[middle]; //odd students so just the middle value
+         median = newArray[middle]; //odd students so just the middle value
      }
 
-    mean = sum/float(totalStudents); //using float so we can have decimal points
+    mean = sum/float(waiters); //using float so we can have decimal points
 
     int totalLeftOver = 0, maxLeftOver = 0;
      for(int y=0; y<numWindows; y++){
